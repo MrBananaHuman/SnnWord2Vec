@@ -1,0 +1,47 @@
+begintemplate IafCell
+
+	public soma
+	public IAF, syn
+	public x, y, x
+	public addConnection
+	
+	objref IAF, syn, nc
+	create soma
+	
+	
+	proc init() {
+		x = $1
+		y = $2
+		z = $3
+		
+		soma {
+			pt3dclear()
+			pt3dadd(x, y, z, 10)
+			pt3dadd(x+5, y, z, 10)
+
+			IAF = new IntFire1(0.5)
+			IAF.tau = 20
+			IAF.refrac = 5
+			
+			syn = new MyExpSynSTDP(0.5)
+			
+			syn.wmax = 1
+			syn.wmin = -1
+			syn.p = 0.23
+			syn.ptau = 10
+			syn.d = 0.4
+			syn.dtau = 10
+			syn.isHebb = 1
+			syn.sh = 0
+			syn.rest_width = 1
+			syn.pre_spike_num = 0
+			syn.post_spike_num = 0
+			syn.maximum_spike_num = 5
+			
+			//nc = new NetCon(IAF, syn, 0, 0, -1)
+			
+		}
+	}
+
+	
+endtemplate IafCell

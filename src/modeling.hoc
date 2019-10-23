@@ -1,0 +1,73 @@
+vocab_size = 40000
+embedding_vector_size = 300
+
+
+n_input_neuron = vocab_size
+n_hidden_neuron = 300
+n_output_neuron = vocab_size
+
+objref input_neuron[n_input_neuron]
+objref input_neuron_stim[n_input_neuron]
+objref hidden_neuron[n_hidden_neuron]
+objref output_neuron[n_output_neuron]
+objref output_neuron_stim[n_output_neuron]
+
+// ************Intializing neurons***************
+
+// input neuron
+for(i = 0; i < n_input_neuron; i += 1){
+    input_neuron[i] = new IafCell()
+
+    input_neuron[i].soma input_neuron_data[i] = new IClamp(0.5)
+	input_neuron_data[i].dur = simulation_time
+	input_neuron_data[i].amp = 0
+	input_neuron_data[i].del = 0
+}
+
+// hidden neuron
+for(i = 0; i < n_hidden_neuron; i += 1){
+    hidden_neuron[i] = new IafCell()
+}
+
+// output neuron
+for(i = 0; i < n_output_neuron; i += 1){
+    output_neuron[i] = new IafCell()
+
+    output_neuron[i].soma output_neuron_stim[i] = new IClamp(0.5)
+	output_neuron_stim[i].dur = simulation_time
+	output_neuron_stim[i].amp = 0
+	output_neuron_stim[i].del = 0
+}
+
+/*
+    NetCon is to inject current to target neuron from source neuron
+    
+                    PRE --> POST
+      preNeuron(NetCon) --> (Synapse)postNeuron
+
+    Each IafCell() has syn in that soma
+
+*/
+
+// 1. input -> hidden
+objref nc_input_to_hidden[n_input_neuron][n_hidden_neuron]
+for(i = 0; i < n_input_neuron; i += 1){
+    for(j = 0; j < n_hidden_neuron; j += 1){
+        input_neuron[i].soma nc_input_to_hidden[i][j] = new NetCon(&v(0.5), hidden_neuron[j].syn, 0, 1, 0.2)
+    }
+}
+
+// 2. hidden -> output
+objref nc_hidden_to_output[n_hidden_neuron][n_output_neuron]
+for(i = 0; i < n_hidden_neuron; i += 1){
+    for(j = 0; j < n_output_neuron; j += 1){
+        hidden_neuron[i].soma nc_hidden_to_output[i][j] = new NetCon(&v(0.5), output_neuron[j].syn, 0, 1, 0.2)
+    }
+}
+
+/*
+    Load corpus to learn relationship between words
+    
+    e.g.) Attention is all you need
+    --> first word: Attention
+*/
