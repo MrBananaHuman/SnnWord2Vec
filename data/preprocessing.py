@@ -1,56 +1,27 @@
-// Seonghyun Kim
+vocab = open('vocab.txt', 'r', encoding='utf-8')
+corpus = open('corpus.txt', 'r', encoding='utf-8')
+output = open('preprocessed_corpus.txt', 'w', encoding='utf-8')
 
-v_init = 0
+vocab_lines = vocab.readlines()
+vocab.close()
 
-load_file("nrngui.hoc")
-load_file("IafCell.hoc")
-xopen("modeling.hoc")
+vocab_id = dict()
+id = 0
 
-cvode_active(0)
+for line in vocab_lines:
+    line = line.replace('\n', '')
+    vocab_id[line] = id
+    id += 1
 
-proc init(){
-	finitialize()
-	if (cvode.active()) {
-		cvode.re_init()
-	} else {
-		fcurrent()
-	}
-	frecord_init()
-}
+corpus_lines = corpus.readlines()
+corpus.close()
 
-simulation_time = 1000
-tstop = simulation_time
+for line in corpus_lines:
+    line = line.replace('\n', '')
+    output_line = ''
+    for word in line.split(' '):
+        if word in vocab_id:
+            output_line += vocab_id[word] + ' '
+    output.write(output_line.strip() + '\n')
 
-objref corpus_file
-
-corpus_file = new File()
-corpus_file.ropen("../data/corpus.txt")
-
-corpus_sent_num  = 0
-
-strdef current_sent
-while(!corpus_file.eof()){
-    corpus_file.gets(current_sent)
-	corpus_sent_num += 1
-}
-
-
-objref sentences[corpus_sent_num]
-for(i = 0; i < corpus_sent_num; i += 1){
-    sentences[i] = new Vecotr()
-}
-
-corpus_file.ropen("../data/corpus.txt")
-sent_idx = 0
-data_idx = 0
-objref ch
-while(!corpus_file.eof()){
-    ch = corpus_file.scanvar()
-    sentences[sent_dix].insrt(data_idx, corpus_file.scanvar())
-    if(ch == 0){
-        sent_idx += 1
-        data_idx = 0
-    } else{
-        data_idx = 0
-    }
-}
+output.close()
