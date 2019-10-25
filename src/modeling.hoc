@@ -64,10 +64,3 @@ for(i = 0; i < n_hidden_neuron; i += 1){
         hidden_neuron[i].soma nc_hidden_to_output[i][j] = new NetCon(&v(0.5), output_neuron[j].syn, 0, 1, 0.2)
     }
 }
-
-/*
-    Load corpus to learn relationship between words
-    
-    e.g.) Attention is all you need
-    --> first word: Attention
-*/
