@@ -1,0 +1,53 @@
+
+begintemplate ballCell
+
+	public soma, syn
+	create soma
+    objref syn
+	
+	
+	proc init() {
+		v_init = -70
+		biophys()
+	}
+	
+	proc biophys() {
+		Vrest = -70
+		spas = Vrest
+		Cm = 1.0
+		
+		soma {
+			nseg = 1
+			diam = 18.8
+			L = 18.8
+			cm = 1.0
+			Ra = 123.0
+			
+			//insert pas
+			insert hh
+			
+			gnabar_hh = 0.25
+			gkbar_hh = 0.036
+			gl_hh = 0.000016667
+			ena = 50
+			ek = -81
+			el_hh = -65.0
+
+            syn = new MyExpSynSTDP(0.5)
+			
+			syn.wmax = 1
+			syn.wmin = -1
+			syn.p = 0.23
+			syn.ptau = 10
+			syn.d = 0.4
+			syn.dtau = 10
+			syn.isHebb = 1
+			syn.sh = 0
+			syn.rest_width = 1
+			syn.pre_spike_num = 0
+			syn.post_spike_num = 0
+			syn.maximum_spike_num = 5
+		}
+	}
+	
+endtemplate ballCell
