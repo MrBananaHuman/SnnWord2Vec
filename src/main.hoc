@@ -4,7 +4,7 @@ v_init = 0
 
 load_file("nrngui.hoc")
 load_file("IafCell.hoc")
-load_file("modeling.hoc")
+xopen("modeling.hoc")
 
 cvode_active(0)
 
@@ -21,50 +21,36 @@ proc init(){
 simulation_time = 1000
 tstop = simulation_time
 
-/*
-vocab_file = new File()
-vocab_file.ropen("vocabs.txt")
+objref corpus_file
 
-objref vocabs
-vocabs = new Vector()
+corpus_file = new File()
+corpus_file.ropen("../data/corpus.txt")
 
-vocab_size = 0
+corpus_sent_num  = 0
 
-while(!vocab_file.eof()){
-    vocab_iter = vocabs.size()
-    vocabs.insrt(vocab_iter, vocab_file.scanvar())
-    vocab_size += 1
+strdef current_sent
+while(!corpus_file.eof()){
+    corpus_file.gets(current_sent)
+	corpus_sent_num += 1
 }
-*/
 
 
+objref sentences[corpus_sent_num]
+for(i = 0; i < corpus_sent_num; i += 1){
+    sentences[i] = new Vecotr()
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+corpus_file.ropen("../data/corpus.txt")
+sent_idx = 0
+data_idx = 0
+objref ch
+while(!corpus_file.eof()){
+    ch = corpus_file.scanvar()
+    sentences[sent_dix].insrt(data_idx, corpus_file.scanvar())
+    if(ch == 0){
+        sent_idx += 1
+        data_idx = 0
+    } else{
+        data_idx = 0
+    }
+}
