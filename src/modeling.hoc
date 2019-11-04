@@ -1,9 +1,9 @@
-vocab_size = 10
-embedding_vector_size = 10
+vocab_size = 1006
+embedding_vector_size = 5
 
 
 n_input_neuron = vocab_size
-n_hidden_neuron = 10
+n_hidden_neuron = embedding_vector_size
 n_output_neuron = vocab_size
 
 objref input_neuron[n_input_neuron]
@@ -47,23 +47,83 @@ for(i = 0; i < n_output_neuron; i += 1){
                     PRE --> POST
       preNeuron(NetCon) --> (Synapse)postNeuron
 
-    Each IafCell() has syn in that soma
-
 */
 
+stdp_e = 0
+stdp_tau = 5
+stdp_gmax = 0.0002
+stdp_wmax = 1
+stdp_wmin = -1
+stdp_p = 0.23
+stdp_ptau = 10
+stdp_d = 0.4
+stdp_dtau = 10
+stdp_isHebb = 1
+stdp_sh = 0
+stdp_isHebb = 1
+stdp_rest_width = 1
+stdp_pre_spike_num = 0
+stdp_post_spike_num = 0
+stdp_maximum_spike_num = 5
+
+
 // 1. input -> hidden
+objref syn_hidden_from_input[n_hidden_neuron][n_input_neuron]
+for(i = 0; i < n_hidden_neuron; i += 1){
+	for(j = 0; j < n_input_neuron; j += 1){
+		hidden_neuron[i].soma syn_hidden_from_input[i][j] = new MyExpSynSTDP(0.5)
+		syn_hidden_from_input[i][j].e = stdp_e
+		syn_hidden_from_input[i][j].tau = stdp_tau
+		syn_hidden_from_input[i][j].gmax = stdp_gmax
+		syn_hidden_from_input[i][j].wmax = stdp_wmax
+		syn_hidden_from_input[i][j].wmin = stdp_wmin
+		syn_hidden_from_input[i][j].p = stdp_p
+		syn_hidden_from_input[i][j].ptau = stdp_ptau
+		syn_hidden_from_input[i][j].d = stdp_d
+		syn_hidden_from_input[i][j].dtau = stdp_dtau
+		syn_hidden_from_input[i][j].sh = stdp_sh
+		syn_hidden_from_input[i][j].isHebb = stdp_isHebb
+		syn_hidden_from_input[i][j].rest_width = stdp_rest_width
+		syn_hidden_from_input[i][j].pre_spike_num = stdp_pre_spike_num
+		syn_hidden_from_input[i][j].post_spike_num = stdp_post_spike_num
+		syn_hidden_from_input[i][j].maximum_spike_num = stdp_maximum_spike_num
+	}
+}
+
 objref nc_input_to_hidden[n_input_neuron][n_hidden_neuron]
 for(i = 0; i < n_input_neuron; i += 1){
     for(j = 0; j < n_hidden_neuron; j += 1){
-        nc_input_to_hidden[i][j] = new NetCon(input_neuron[i].soma, hidden_neuron[j].syn, 0, 1, 0.2)
+        input_neuron[i].soma nc_input_to_hidden[i][j] = new NetCon(&v(0.5), syn_hidden_from_input[j][i], 0, 1, 2)
     }
 }
 
 // 2. hidden -> output
+objref syn_output_from_hidden[n_output_neuron][n_hidden_neuron]
+for(i = 0; i < n_output_neuron; i += 1){
+	for(j = 0; j < n_hidden_neuron; j += 1){
+		output_neuron[i].soma syn_output_from_hidden[i][j] = new MyExpSynSTDP(0.5)
+		syn_output_from_hidden[i][j].e = stdp_e
+		syn_output_from_hidden[i][j].tau = stdp_tau
+		syn_output_from_hidden[i][j].gmax = stdp_gmax
+		syn_output_from_hidden[i][j].wmax = stdp_wmax
+		syn_output_from_hidden[i][j].wmin = stdp_wmin
+		syn_output_from_hidden[i][j].p = stdp_p
+		syn_output_from_hidden[i][j].ptau = stdp_ptau
+		syn_output_from_hidden[i][j].d = stdp_d
+		syn_output_from_hidden[i][j].dtau = stdp_dtau
+		syn_output_from_hidden[i][j].sh = stdp_sh
+		syn_output_from_hidden[i][j].isHebb = stdp_isHebb
+		syn_output_from_hidden[i][j].rest_width = stdp_rest_width
+		syn_output_from_hidden[i][j].pre_spike_num = stdp_pre_spike_num
+		syn_output_from_hidden[i][j].post_spike_num = stdp_post_spike_num
+		syn_output_from_hidden[i][j].maximum_spike_num = stdp_maximum_spike_num
+	}
+}
+
 objref nc_hidden_to_output[n_hidden_neuron][n_output_neuron]
 for(i = 0; i < n_hidden_neuron; i += 1){
     for(j = 0; j < n_output_neuron; j += 1){
-        nc_hidden_to_output[i][j] = new NetCon(hidden_neuron[i].soma , output_neuron[j].syn, 0, 1, 0.2)
+        hidden_neuron[i].soma nc_hidden_to_output[i][j] = new NetCon(&v(0.5) , syn_output_from_hidden[j][i], 0, 1, 2)
     }
 }
 
