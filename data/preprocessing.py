@@ -21,7 +21,7 @@ for line in corpus_lines:
     output_line = ''
     for word in line.split(' '):
         if word in vocab_id:
-            output_line += vocab_id[word] + ' '
+            output_line += str(vocab_id[word]) + ' '
     output.write(output_line.strip() + '\n')
 
 output.close()
