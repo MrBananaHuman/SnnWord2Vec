@@ -32,21 +32,6 @@ begintemplate ballCell
 			ena = 50
 			ek = -81
 			el_hh = -65.0
-
-            syn = new MyExpSynSTDP(0.5)
-			
-			syn.wmax = 1
-			syn.wmin = -1
-			syn.p = 0.23
-			syn.ptau = 10
-			syn.d = 0.4
-			syn.dtau = 10
-			syn.isHebb = 1
-			syn.sh = 0
-			syn.rest_width = 1
-			syn.pre_spike_num = 0
-			syn.post_spike_num = 0
-			syn.maximum_spike_num = 5
 		}
 	}
 	
